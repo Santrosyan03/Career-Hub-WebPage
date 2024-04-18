@@ -13,6 +13,6 @@ public interface Inventory {
     int dropSomeQuantity(MaterialType type, int quantity) throws ExceedingCapacity, InvalidQuantity, MaterialNotFound;
     void transferFullMaterial(Inventory toWarehouse, MaterialType type) throws ExceedingCapacity, MaterialAlreadyExists, InvalidQuantity, MaterialNotFound;
     int transferSomeQuantityOfMaterial(Inventory toWarehouse, MaterialType type, int quantity) throws ExceedingCapacity, InvalidQuantity, MaterialAlreadyExists, MaterialNotFound;
-    int getMaterialQuantity(MaterialType type) throws MaterialNotFound;
-    Map<MaterialType, Integer> listAllMaterials() throws WarehouseIsEmpty;
+    Map<MaterialType, Integer> listAllMaterials();
+    int getMaterialQuantity(Inventory warehouse, MaterialType type) throws MaterialNotFound;
 }

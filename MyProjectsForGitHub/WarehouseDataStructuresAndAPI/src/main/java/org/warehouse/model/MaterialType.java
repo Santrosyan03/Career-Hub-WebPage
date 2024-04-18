@@ -6,13 +6,6 @@ public class MaterialType {
     private String icon;
     private int maximumCapacity;
 
-    public MaterialType() {
-        this.name = "";
-        this.description = "";
-        this.icon = "";
-        this.maximumCapacity = 0;
-    }
-
     public MaterialType(String name, String description, String icon, int maximumCapacity) {
         this.name = name;
         this.description = description;

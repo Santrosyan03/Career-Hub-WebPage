@@ -59,7 +59,7 @@ public class WareHouse implements Inventory {
      * @throws InvalidQuantity If the quantity is less than or equal to zero.
      * @throws ExceedingCapacity If the quantity exceeds the maximum capacity of the material.
      */
-    private void checkInvalidQuantity(MaterialType type, int quantity) throws InvalidQuantity, ExceedingCapacity {
+    public void checkInvalidQuantity(MaterialType type, int quantity) throws InvalidQuantity, ExceedingCapacity {
         if (quantity <= 0) {
             throw new InvalidQuantity("The quantity must be greater than 0");
         }
@@ -119,7 +119,7 @@ public class WareHouse implements Inventory {
      */
     @Override
     public void transferFullMaterial(Inventory toWarehouse, MaterialType type) throws ExceedingCapacity, MaterialAlreadyExists, InvalidQuantity, MaterialNotFound {
-        if (!warehouseMaterials.containsKey(type)) {
+        if (!toWarehouse.listAllMaterials().containsKey(type)) {
             toWarehouse.addMaterial(type, warehouseMaterials.get(type));
         } else {
             toWarehouse.updateMaterialQuantity(type, warehouseMaterials.get(type));
@@ -142,7 +142,7 @@ public class WareHouse implements Inventory {
     @Override
     public int transferSomeQuantityOfMaterial(Inventory toWarehouse, MaterialType type, int quantity) throws ExceedingCapacity, InvalidQuantity, MaterialAlreadyExists, MaterialNotFound {
         checkInvalidQuantity(type, quantity);
-        if (!warehouseMaterials.containsKey(type)) {
+        if (!toWarehouse.listAllMaterials().containsKey(type)) {
             toWarehouse.addMaterial(type, quantity);
         } else {
             toWarehouse.updateMaterialQuantity(type, quantity);
@@ -152,32 +152,33 @@ public class WareHouse implements Inventory {
     }
 
     /**
+     * Lists all materials and their quantities in the warehouse.
+     * @return A map of all materials and their respective quantities.
+     */
+    @Override
+    public Map<MaterialType, Integer> listAllMaterials() {
+        if (warehouseMaterials.isEmpty()) {
+            System.out.println();
+        }
+
+        for (MaterialType materialType : warehouseMaterials.keySet()) {
+            System.out.println(materialType);
+        }
+        return warehouseMaterials;
+    }
+
+    /**
      * Retrieves the current quantity of a specified material in the warehouse.
+     * @param warehouse The inventory from which to retrieve the material quantity.
      * @param type The material type whose quantity is to be retrieved.
      * @return The current quantity of the material.
      * @throws MaterialNotFound If the material is not found in the warehouse's inventory.
      */
     @Override
-    public int getMaterialQuantity(MaterialType type) throws MaterialNotFound {
+    public int getMaterialQuantity(Inventory warehouse, MaterialType type) throws MaterialNotFound {
         if (!warehouseMaterials.containsKey(type)) {
             throw new MaterialNotFound("The material's quantity you want to see is not found");
         }
-        return type.getMaximumCapacity();
-    }
-
-    /**
-     * Lists all materials and their quantities in the warehouse.
-     * @return A map of all materials and their respective quantities.
-     * @throws WarehouseIsEmpty If there are no materials in the warehouse.
-     */
-    @Override
-    public Map<MaterialType, Integer> listAllMaterials() throws WarehouseIsEmpty {
-        if (warehouseMaterials.isEmpty()) {
-            throw new WarehouseIsEmpty("Warehouse is empty, nothing to show");
-        }
-        for (MaterialType materialType : warehouseMaterials.keySet()) {
-            System.out.println(materialType);
-        }
-        return  warehouseMaterials;
+        return warehouse.listAllMaterials().get(type);
     }
 }

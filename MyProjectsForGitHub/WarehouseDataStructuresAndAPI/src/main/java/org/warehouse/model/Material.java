@@ -4,11 +4,6 @@ public class Material {
     private MaterialType materialType;
     private int quantity;
 
-    public Material() {
-        this.materialType = new MaterialType();
-        this.quantity = 0;
-    }
-
     public Material(MaterialType materialType, int quantity) {
         this.materialType = materialType;
         this.quantity = quantity;

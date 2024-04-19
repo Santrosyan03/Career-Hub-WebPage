@@ -1,9 +1,8 @@
 package org.warehouse.management;
 
 import org.warehouse.exceptions.*;
-import org.warehouse.model.MaterialType;
+import org.warehouse.model.material.MaterialType;
 
-import java.util.List;
 import java.util.Map;
 
 public interface Inventory {
@@ -15,4 +14,5 @@ public interface Inventory {
     int transferSomeQuantityOfMaterial(Inventory toWarehouse, MaterialType type, int quantity) throws ExceedingCapacity, InvalidQuantity, MaterialAlreadyExists, MaterialNotFound;
     Map<MaterialType, Integer> listAllMaterials();
     int getMaterialQuantity(Inventory warehouse, MaterialType type) throws MaterialNotFound;
+    int upgradeMaterialQuantity(MaterialType type, int extraQuantity) throws MaterialNotFound, ExceedingCapacity, InvalidQuantity;
 }

@@ -1,13 +1,32 @@
 package org.warehouse.management;
 
 import org.warehouse.exceptions.*;
-import org.warehouse.model.MaterialType;
+import org.warehouse.model.material.MaterialType;
 
 import java.util.Map;
 
+/**
+ * Represents a warehouse for managing inventory.
+ * This class handles operations on the inventory of materials, providing functionalities
+ * such as adding, updating, and querying the stock of various material types.
+ * The inventory is managed using a map where each material type is associated with its quantity.
+ */
+
 public class WareHouse implements Inventory {
+
+    // Map to hold the association between material types and their respective quantities.
+    // The MaterialType object acts as a key, and the associated Integer value represents the stock quantity of that material.
     private final Map<MaterialType, Integer> warehouseMaterials;
 
+    /**
+     * Constructs a new WareHouse object with the provided inventory mapping.
+     * This constructor initializes the warehouse with a pre-defined set of materials and their quantities.
+     * It is typically used when creating a WareHouse instance with an initial stock list, or when restoring state
+     * from a persisted data source.
+     *
+     * @param warehouseMaterials A map containing initial material types and their corresponding quantities.
+     *                           This parameter should not be null; an empty map should be provided if no initial stock is available.
+     */
     public WareHouse(Map<MaterialType, Integer> warehouseMaterials) {
         this.warehouseMaterials = warehouseMaterials;
     }
@@ -180,5 +199,29 @@ public class WareHouse implements Inventory {
             throw new MaterialNotFound("The material's quantity you want to see is not found");
         }
         return warehouse.listAllMaterials().get(type);
+    }
+
+    /**
+     * Increases the quantity of a specific material stored in the warehouse by a specified amount.
+     * This method allows the caller to add additional units to the existing inventory of a given material type.
+     *
+     * @param type The type of material to be updated. This should be a pre-defined MaterialType object that is already known and managed by the warehouse.
+     * @param extraQuantity The additional quantity to be added to the existing stock of the specified material.
+     *                      This value must be positive, and the method will not check for overflow beyond the maximum capacity if such a limit is defined elsewhere.
+     * @return The new total quantity of the material after the addition.
+     * @throws ExceedingCapacity If the transfer exceeds the capacity limits of the destination warehouse.
+     * @throws InvalidQuantity If the specified quantity is invalid or not available.
+     * @throws MaterialNotFound If the material is not found in this warehouse.
+     */
+    @Override
+    public int upgradeMaterialQuantity(MaterialType type, int extraQuantity) throws MaterialNotFound, ExceedingCapacity, InvalidQuantity {
+        checkInvalidQuantity(type, extraQuantity);
+
+        if (warehouseMaterials.containsKey(type)) {
+            int finalQuantity = warehouseMaterials.get(type) + extraQuantity;
+            warehouseMaterials.put(type, finalQuantity);
+            return finalQuantity;
+        }
+        throw new MaterialNotFound("The material's quantity you want to update is not found");
     }
 }

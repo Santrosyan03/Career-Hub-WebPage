@@ -1,4 +1,4 @@
-package org.warehouse.model;
+package org.warehouse.model.material;
 
 public class MaterialType {
     private String name;

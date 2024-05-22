@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
-public class RepeatedIdErrorResponse extends RuntimeException {
-    @ExceptionHandler(RepeatedIdErrorResponse.class)
+public class RepeatedEmailErrorResponse extends RuntimeException {
+    @ExceptionHandler(RepeatedEmailErrorResponse.class)
     public ResponseEntity<ErrorResponse> handleException() {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.NOT_ACCEPTABLE.value(),
                 "Not Acceptable",
-                "Account with such ID already exists!!!",
+                "Account with such email already exists!!!",
                 LocalDateTime.now()
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_ACCEPTABLE);

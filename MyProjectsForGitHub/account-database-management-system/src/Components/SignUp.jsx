@@ -84,10 +84,6 @@ const SignUpFORM = () => {
         });
     };
 
-    const isPasswordCorrect = () => {
-        return formData.password.length >= 8 && /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(formData.password)
-    }
-
     const passwordsMatch = () => {
         return formData.password === formData.reWritePassword;
     };
@@ -104,7 +100,7 @@ const SignUpFORM = () => {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(`Sign up failed: ${errorData.message}`);
+                throw new Error(errorData.message);
             }
 
             return response.json();
@@ -115,11 +111,6 @@ const SignUpFORM = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (!isPasswordCorrect()) {
-            alert("Password should be at least 8 character long, with at least a symbol, upper and lower case letter and a number.")
-            return;
-        }
 
         if (!passwordsMatch()) {
             alert("Passwords do not match");
@@ -138,7 +129,7 @@ const SignUpFORM = () => {
 
     return (
         <SignUpContainer>
-            <SignUpForm onSubmit={handleSubmit}>
+            <SignUpForm>
                 <FormTitle>Create Account</FormTitle>
                 <FormField>
                     <Label>Email</Label>
@@ -173,7 +164,7 @@ const SignUpFORM = () => {
                     <Label>Re-write Password</Label>
                     <Input type="password" name="reWritePassword" value={formData.reWritePassword} onChange={handleChange} required />
                 </FormField>
-                <Button type="submit">
+                <Button type="submit" onClick={handleSubmit}>
                     Sign Up
                 </Button>
             </SignUpForm>

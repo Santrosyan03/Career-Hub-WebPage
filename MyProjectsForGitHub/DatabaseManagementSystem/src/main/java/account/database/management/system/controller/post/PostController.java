@@ -18,7 +18,7 @@ public class PostController {
     }
 
     @PostMapping("/signup")
-    public Account addAccount(@RequestBody Account newAccount) {
+    public Account addAccount(@RequestBody Account newAccount) throws Exception {
         newAccount.setId(UUID.randomUUID());
         return service.addAccount(newAccount);
     }

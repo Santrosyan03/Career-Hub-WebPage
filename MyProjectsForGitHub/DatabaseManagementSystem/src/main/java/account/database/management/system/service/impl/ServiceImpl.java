@@ -7,6 +7,7 @@ import account.database.management.system.model.Account;
 import account.database.management.system.repository.AccountRepository;
 import account.database.management.system.service.ServiceRep;
 
+import net.javaguides.examples.security.AESEncryptionDecryption;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,13 +37,18 @@ public class ServiceImpl implements ServiceRep {
             throw new RepeatedEmailErrorResponse();
         }
 
+        AESEncryptionDecryption aesEncryptionDecryption = new AESEncryptionDecryption();
+        String secretKey = "secretKEY";
+        String hashed = aesEncryptionDecryption.encrypt(account.getPassword(), secretKey);
+
+
         List<Account> accounts = accountRepository.findAll();
         for (Account existingAccount : accounts) {
-            if (existingAccount.getPassword().equals(account.getPassword())) {
+            if (aesEncryptionDecryption.decrypt(existingAccount.getPassword(), secretKey).equals(account.getPassword())) {
                 throw new RepeatedPasswordErrorResponse();
             }
         }
-
+        account.setPassword(hashed);
         return accountRepository.save(account);
     }
 

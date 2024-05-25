@@ -14,7 +14,7 @@ public class RepeatedEmailErrorResponse extends RuntimeException {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.NOT_ACCEPTABLE.value(),
                 "Not Acceptable",
-                "Account with such email already exists!!!",
+                "JobSeeker with such email already exists!!!",
                 LocalDateTime.now()
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_ACCEPTABLE);

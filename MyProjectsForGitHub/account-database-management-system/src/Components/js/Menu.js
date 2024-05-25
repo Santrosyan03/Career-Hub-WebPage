@@ -52,12 +52,12 @@ const Menu = () => {
                         <Link to="/companies/register">
                             Register
                         </Link>
-                        <Link to="/companies/job-packages">
-                            Job Packages
-                        </Link>
-                        <Link to="/companies/training-packages">
-                            Training Packages
-                        </Link>
+                        {/*<Link to="/companies/job-packages">*/}
+                        {/*    Job Packages*/}
+                        {/*</Link>*/}
+                        {/*<Link to="/companies/training-packages">*/}
+                        {/*    Training Packages*/}
+                        {/*</Link>*/}
                     </div>
                 </div>
                 <div className="dropdown">

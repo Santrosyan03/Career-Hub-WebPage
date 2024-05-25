@@ -8,7 +8,7 @@
         <version>3.2.2</version>
         <relativePath/>
     </parent>
-    <groupId>account.database.management.system</groupId>
+    <groupId>jobSeeker.database.management.system</groupId>
     <artifactId>AccountDatabaseManagementSystem</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>AccountDatabaseManagementSystem</name>

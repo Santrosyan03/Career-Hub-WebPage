@@ -12,7 +12,7 @@ public class NotExistingErrorResponse extends RuntimeException {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
                 "Not Found",
-                "Account do not exist!!!",
+                "JobSeeker do not exist!!!",
                 LocalDateTime.now()
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);

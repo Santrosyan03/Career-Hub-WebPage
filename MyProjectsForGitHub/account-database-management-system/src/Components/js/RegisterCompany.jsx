@@ -1,9 +1,11 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import '../css/RegisterJobSeeker.css';
 import { getAllCountries } from './countries.js';
 import cities from "./cities.json";
+import Select from "react-select";
+import PhoneInput from 'react-phone-input-2';
 
-const RegisterJobSeeker = () => {
+const RegisterCompany = () => {
     const [formData, setFormData] = useState({
         companyName: '',
         contactPersonFullName: '',
@@ -21,7 +23,7 @@ const RegisterJobSeeker = () => {
         const { name, value } = e.target;
         setFormData({
             ...formData,
-            [name]: value,
+            [name]: value
         });
     };
 
@@ -40,7 +42,6 @@ const RegisterJobSeeker = () => {
         });
     };
 
-
     const passwordsMatch = () => {
         return formData.password === formData.reWritePassword;
     };
@@ -58,7 +59,7 @@ const RegisterJobSeeker = () => {
             formData.taxNumber !== "" &&
             formData.industry !== "" &&
             formData.email !== "";
-    }
+    };
 
     const sendPostRequest = async () => {
         try {
@@ -69,11 +70,6 @@ const RegisterJobSeeker = () => {
                 },
                 body: JSON.stringify(formData)
             });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message);
-            }
 
             return response.json();
         } catch (error) {
@@ -114,39 +110,62 @@ const RegisterJobSeeker = () => {
         window.location.href = '/companies/login';
     };
 
-    const selectCountry = () => {
-        return getAllCountries().map((country, index) => (
-            <option key={index} value={country.country}>
-                {country.text}
-            </option>
-        ));
-    }
-    const selectCity = () => {
-        let filteredCities = [];
-        let citiesOfSelectedCountry = [];
-        citiesOfSelectedCountry = cities;
+    const handleCountryChange = (selectedOption) => {
+        const country = selectedOption ? selectedOption.label : '';
+        const cityOptions = selectCityOptions(country);
+        const randomCity = cityOptions.length > 0 ? cityOptions[Math.floor(Math.random() * cityOptions.length)].label : '';
 
-        const countryCode = getAllCountries().find(
-            (country) => country.text === formData.country
-        )?.value;
+        setFormData({
+            ...formData,
+            country: country,
+            city: randomCity,
+            phoneNumber: country ? formData.phoneNumber : ''
+        });
+    };
 
-        for (let i = 0; i < citiesOfSelectedCountry.length; i++) {
-            const country = citiesOfSelectedCountry[i].country;
-            const cityName = citiesOfSelectedCountry[i].name;
-            if (country === countryCode) {
-                filteredCities.push(cityName);
+    const handleCityChange = (selectedOption) => {
+        setFormData({
+            ...formData,
+            city: selectedOption ? selectedOption.label : ''
+        });
+    };
+
+    const handlePhoneChange = (value) => {
+        setFormData({
+            ...formData,
+            phoneNumber: value
+        });
+    };
+
+    const selectCountryOptions = () => {
+        return getAllCountries().map((country) => ({
+            value: country.value,
+            label: country.text
+        }));
+    };
+
+    const getCountryCode = (countryName) => {
+        const country = getAllCountries().find(
+            (country) => country.text === countryName
+        );
+        return country ? country.value.toLowerCase() : '';
+    };
+
+    const selectCityOptions = (countryName) => {
+        const country = getAllCountries().find((c) => c.text === countryName);
+        const countryCode = country ? country.value : '';
+
+        const filteredCities = [];
+        for (const city of cities) {
+            if (city.country === countryCode) {
+                filteredCities.push({ value: city.name, label: city.name });
             }
         }
-        filteredCities.sort();
 
-        return filteredCities.map((city) => (
-            <option>
-                {city}
-            </option>
-        ));
-    }
+        filteredCities.sort((a, b) => a.label.localeCompare(b.label));
 
-
+        return filteredCities;
+    };
 
     return (
         <div className="SignUpContainer">
@@ -178,57 +197,47 @@ const RegisterJobSeeker = () => {
                            required
                     />
                 </div>
+
                 <div className="FormField">
-                    <label className="Label">
-                        Country
-                    </label>
-                    <select name="country"
+                    <label className="Label">Country</label>
+                    <Select
+                        name="country"
+                        className="Select"
+                        value={selectCountryOptions().find(option => option.label === formData.country)}
+                        onChange={handleCountryChange}
+                        options={selectCountryOptions()}
+                        placeholder="Select your country"
+                        isClearable
+                        required
+                    />
+                </div>
+
+                {formData.country &&
+                    <div className="FormField">
+                        <label className="Label">City</label>
+                        <Select
+                            name="city"
                             className="Select"
-                            value={formData.country}
-                            onChange={handleChange}
+                            value={selectCityOptions(formData.country).find(option => option.label === formData.city)}
+                            onChange={handleCityChange}
+                            options={selectCityOptions(formData.country)}
+                            placeholder="Select your city"
+                            isClearable
                             required
-                    >
-                        <option>Select your country</option>
-                        {selectCountry()}
-                    </select>
-                </div>
-
-                <div className="FormField">
-                    <label className="Label">
-                        City
-                    </label>
-                    <select name="city"
-                            className="Select"
-                            value={formData.city}
-                            onChange={handleChange}
-                            required
-                    >
-                        <option>Select your city</option>
-                        {selectCity()}
-                    </select>
-                </div>
-
-
-
-                <div className="FormField">
-                    <label className="Label">Last Name</label>
-                    <input type="text" name="lastName" className="Input" value={formData.lastName}
-                           onChange={handleChange} required/>
-                </div>
-                <div className="FormField">
-                    <label className="Label">Date of Birth</label>
-                    <input type="date" name="dateOfBirth" className="Input" value={formData.dateOfBirth}
-                           onChange={handleChange} required/>
-                </div>
-                <div className="FormField">
-                    <label className="Label">Gender</label>
-                    <select name="gender" className="Select" value={formData.gender} onChange={handleChange} required>
-                        <option value="">Select Gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
+                        />
+                    </div>
+                }
+                {formData.country &&
+                    <div className="FormField">
+                        <PhoneInput
+                            containerClass={"Label"}
+                            inputClass={"Input"}
+                            country={getCountryCode(formData.country)}
+                            value={formData.phoneNumber}
+                            onChange={handlePhoneChange}
+                        />
+                    </div>
+                }
                 <div className="FormField">
                     <label className="Label">Password</label>
                     <input type="password" name="password" className="Input" value={formData.password}
@@ -252,7 +261,7 @@ const RegisterJobSeeker = () => {
                 </div>
             </form>
         </div>
-    );
+);
 };
 
-export default RegisterJobSeeker;
+export default RegisterCompany;

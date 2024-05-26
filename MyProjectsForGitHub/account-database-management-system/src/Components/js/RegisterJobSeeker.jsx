@@ -106,19 +106,37 @@ const RegisterJobSeeker = () => {
     return (
         <div className="SignUpContainer">
             <form className="SignUpForm">
-                <h2 className="FormTitle">Create Account For Job Seeker</h2>
+                <h2 className="FormTitle">
+                    Create Account For Job Seeker
+                </h2>
                 <div className="FormField">
-                    <label className="Label">Email</label>
-                    <input type="email" name="email" className="Input" value={formData.email} onChange={handleChange}
-                           required/>
+                    <label className="Label">
+                        Email
+                    </label>
+                    <input type="email"
+                           name="email"
+                           className="Input"
+                           value={formData.email}
+                           onChange={handleChange}
+                           required
+                    />
                 </div>
                 <div className="FormField">
-                    <label className="Label">First Name</label>
-                    <input type="text" name="firstName" className="Input" value={formData.firstName}
-                           onChange={handleChange} required/>
+                    <label className="Label">
+                        First Name
+                    </label>
+                    <input type="text"
+                           name="firstName"
+                           className="Input"
+                           value={formData.firstName}
+                           onChange={handleChange}
+                           required
+                    />
                 </div>
                 <div className="FormField">
-                    <label className="Label">Last Name</label>
+                    <label className="Label">
+                        Last Name
+                    </label>
                     <input type="text" name="lastName" className="Input" value={formData.lastName}
                            onChange={handleChange} required/>
                 </div>

@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
-import '../css/RegisterJobSeeker.css';
-import { getAllCountries } from './countries.js';
-import cities from "./cities.json";
+import '../css/Register.css';
+import { getAllCountries } from '../information/countries.js';
+import cities from "../information/cities.json";
 import Select from "react-select";
 import PhoneInput from 'react-phone-input-2';
+import { getAllIndustries } from "../information/industries";
 
 const RegisterCompany = () => {
     const [formData, setFormData] = useState({
         companyName: '',
         contactPersonFullName: '',
-        country: '',
+        country: null,
         city: '',
         phoneNumber: '',
-        taxNumber: '',
-        industry: '',
+        industry: null,
         email: '',
         password: '',
         reWritePassword: ''
@@ -31,11 +31,10 @@ const RegisterCompany = () => {
         setFormData({
             companyName: '',
             contactPersonFullName: '',
-            country: '',
+            country: null,
             city: '',
             phoneNumber: '',
-            taxNumber: '',
-            industry: '',
+            industry: null,
             email: '',
             password: '',
             reWritePassword: ''
@@ -53,11 +52,10 @@ const RegisterCompany = () => {
     const isAllFieldsFilledExceptPassword = () => {
         return formData.companyName !== "" &&
             formData.contactPersonFullName !== "" &&
-            formData.country !== "" &&
+            formData.country !== null &&
             formData.city !== "" &&
             formData.phoneNumber !== "" &&
-            formData.taxNumber !== "" &&
-            formData.industry !== "" &&
+            formData.industry !== null &&
             formData.email !== "";
     };
 
@@ -70,6 +68,11 @@ const RegisterCompany = () => {
                 },
                 body: JSON.stringify(formData)
             });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message);
+            }
 
             return response.json();
         } catch (error) {
@@ -86,7 +89,7 @@ const RegisterCompany = () => {
         }
 
         if (!isPasswordInCorrectType()) {
-            alert("Password should be at least 8 character long and include at least one number, one letter (uppercase and lowercase) and one symbol");
+            alert("Password should be at least 8 characters long and include at least one number, one letter (uppercase and lowercase) and one symbol");
             return;
         }
 
@@ -111,7 +114,7 @@ const RegisterCompany = () => {
     };
 
     const handleCountryChange = (selectedOption) => {
-        const country = selectedOption ? selectedOption.label : '';
+        const country = selectedOption ? selectedOption.label : null;
         const cityOptions = selectCityOptions(country);
         const randomCity = cityOptions.length > 0 ? cityOptions[Math.floor(Math.random() * cityOptions.length)].label : '';
 
@@ -130,6 +133,14 @@ const RegisterCompany = () => {
         });
     };
 
+    const handleIndustryChange = (selectedOption) => {
+        const industry = selectedOption ? selectedOption.label : null;
+        setFormData({
+            ...formData,
+            industry: industry
+        });
+    };
+
     const handlePhoneChange = (value) => {
         setFormData({
             ...formData,
@@ -141,6 +152,12 @@ const RegisterCompany = () => {
         return getAllCountries().map((country) => ({
             value: country.value,
             label: country.text
+        }));
+    };
+
+    const selectIndustryOptions = () => {
+        return getAllIndustries().map((industry) => ({
+            value: industry
         }));
     };
 
@@ -197,13 +214,12 @@ const RegisterCompany = () => {
                            required
                     />
                 </div>
-
                 <div className="FormField">
                     <label className="Label">Country</label>
                     <Select
                         name="country"
                         className="Select"
-                        value={selectCountryOptions().find(option => option.label === formData.country)}
+                        value={selectCountryOptions().find(option => option.label === formData.country) || null}
                         onChange={handleCountryChange}
                         options={selectCountryOptions()}
                         placeholder="Select your country"
@@ -211,14 +227,13 @@ const RegisterCompany = () => {
                         required
                     />
                 </div>
-
                 {formData.country &&
                     <div className="FormField">
                         <label className="Label">City</label>
                         <Select
                             name="city"
                             className="Select"
-                            value={selectCityOptions(formData.country).find(option => option.label === formData.city)}
+                            value={selectCityOptions(formData.country).find(option => option.label === formData.city) || null}
                             onChange={handleCityChange}
                             options={selectCityOptions(formData.country)}
                             placeholder="Select your city"
@@ -239,29 +254,68 @@ const RegisterCompany = () => {
                     </div>
                 }
                 <div className="FormField">
+                    <label className="Label">Industry</label>
+                    <Select
+                        name="industry"
+                        className="Select"
+                        onChange={handleIndustryChange}
+                        options={selectIndustryOptions()}
+                        getOptionLabel={(option) => option.value}
+                        getOptionValue={(option) => option.value}
+                        placeholder="Select your industry"
+                        isClearable
+                        required
+                    />
+                </div>
+                <div className="FormField">
+                    <label className="Label">Email</label>
+                    <input type="email"
+                           name="email"
+                           className="Input"
+                           value={formData.email}
+                           onChange={handleChange}
+                           required
+                    />
+                </div>
+                <div className="FormField">
                     <label className="Label">Password</label>
-                    <input type="password" name="password" className="Input" value={formData.password}
-                           onChange={handleChange} required/>
+                    <input type="password"
+                           name="password"
+                           className="Input"
+                           value={formData.password}
+                           onChange={handleChange}
+                           required
+                    />
                 </div>
                 <div className="FormField">
                     <label className="Label">Re-write Password</label>
-                    <input type="password" name="reWritePassword" className="Input" value={formData.reWritePassword}
-                           onChange={handleChange} required/>
+                    <input type="password"
+                           name="reWritePassword"
+                           className="Input"
+                           value={formData.reWritePassword}
+                           onChange={handleChange}
+                           required
+                    />
                 </div>
-                <button type="submit" className="Button" onClick={handleSubmit}>
+                <button type="submit"
+                        className="Button"
+                        onClick={handleSubmit}
+                >
                     Register
                 </button>
                 <div className="already-have-account">
                     <p className="login-text">
                         Already have an account:
                     </p>
-                    <button className="login-button" onClick={redirectToLogin}>
+                    <button className="login-button"
+                            onClick={redirectToLogin}
+                    >
                         Log In
                     </button>
                 </div>
             </form>
         </div>
-);
+    );
 };
 
 export default RegisterCompany;

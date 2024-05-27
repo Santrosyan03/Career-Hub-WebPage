@@ -1,4 +1,4 @@
-package account.database.management.system.exception;
+package account.database.management.system.exception.global;
 
 import lombok.Getter;
 

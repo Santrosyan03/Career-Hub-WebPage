@@ -1,7 +1,6 @@
 package account.database.management.system.service;
 
-import account.database.management.system.exception.NotExistingErrorResponse;
-import account.database.management.system.model.JobSeeker;
+import account.database.management.system.exception.global.NotExistingErrorResponse;
 
 import java.util.List;
 import java.util.UUID;

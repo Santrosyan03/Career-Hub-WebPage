@@ -1,0 +1,32 @@
+export function getAllIndustries() {
+    return [
+            "Finance/Banking/Insurance",
+            "Information Technologies",
+            "Design/Architecture/Construction",
+            "Human Resources/Consulting/Legal",
+            "Import/Export/Trade",
+            "Marketing/Advertising/PR",
+            "Tourism/Hospitality/Entertainment",
+            "Medical/Pharmaceutical",
+            "Sports/Beauty",
+            "Mining/Manufacturing/Production",
+            "TV/Radio/Media",
+            "Education",
+            "Telecommunication",
+            "Services",
+            "NGO/International Organization",
+            "Government",
+            "Agriculture/Winemaking",
+            "Logistics/Courier",
+            "Foundation",
+            "Sports/Betting",
+            "Appliance Store",
+            "Retail Business",
+            "Online Service",
+            "Municipality/State",
+            "e-Commerce",
+            "Investment Management",
+            "Aviation",
+            "Renewable Energy"
+           ];
+}

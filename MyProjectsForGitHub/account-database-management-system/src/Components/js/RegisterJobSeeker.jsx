@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../css/RegisterJobSeeker.css';
+import '../css/Register.css';
 
 const RegisterJobSeeker = () => {
     const [formData, setFormData] = useState({
@@ -137,41 +137,87 @@ const RegisterJobSeeker = () => {
                     <label className="Label">
                         Last Name
                     </label>
-                    <input type="text" name="lastName" className="Input" value={formData.lastName}
-                           onChange={handleChange} required/>
+                    <input type="text"
+                           name="lastName"
+                           className="Input"
+                           value={formData.lastName}
+                           onChange={handleChange}
+                           required
+                    />
                 </div>
                 <div className="FormField">
-                    <label className="Label">Date of Birth</label>
-                    <input type="date" name="dateOfBirth" className="Input" value={formData.dateOfBirth}
-                           onChange={handleChange} required/>
+                    <label className="Label">
+                        Date of Birth
+                    </label>
+                    <input type="date"
+                           name="dateOfBirth"
+                           className="Input"
+                           value={formData.dateOfBirth}
+                           onChange={handleChange}
+                           required
+                    />
                 </div>
                 <div className="FormField">
-                    <label className="Label">Gender</label>
-                    <select name="gender" className="Select" value={formData.gender} onChange={handleChange} required>
-                        <option value="">Select Gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
+                    <label className="Label">
+                        Gender
+                    </label>
+                    <select name="gender"
+                            className="Select"
+                            value={formData.gender}
+                            onChange={handleChange}
+                            required
+                    >
+                        <option value="">
+                            Select Gender
+                        </option>
+                        <option value="male">
+                            Male
+                        </option>
+                        <option value="female">
+                            Female
+                        </option>
+                        <option value="other">
+                            Other
+                        </option>
                     </select>
                 </div>
                 <div className="FormField">
-                    <label className="Label">Password</label>
-                    <input type="password" name="password" className="Input" value={formData.password}
-                           onChange={handleChange} required/>
+                    <label className="Label">
+                        Password
+                    </label>
+                    <input type="password"
+                           name="password"
+                           className="Input"
+                           value={formData.password}
+                           onChange={handleChange}
+                           required
+                    />
                 </div>
                 <div className="FormField">
-                    <label className="Label">Re-write Password</label>
-                    <input type="password" name="reWritePassword" className="Input" value={formData.reWritePassword}
-                           onChange={handleChange} required/>
+                    <label className="Label">
+                        Re-write Password
+                    </label>
+                    <input type="password"
+                           name="reWritePassword"
+                           className="Input"
+                           value={formData.reWritePassword}
+                           onChange={handleChange}
+                           required
+                    />
                 </div>
-                <button type="submit" className="Button" onClick={handleSubmit}>
+                <button type="submit"
+                        className="Button"
+                        onClick={handleSubmit}
+                >
                     Register
                 </button>
                 <div className="already-have-account">
                     <p className="login-text">
                         Already have an account:
                     </p>
-                    <button className="login-button" onClick={redirectToLogin}>
+                    <button className="login-button"
+                            onClick={redirectToLogin}
+                    >
                         Log In
                     </button>
                 </div>

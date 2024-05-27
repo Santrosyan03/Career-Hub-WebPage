@@ -1,8 +1,8 @@
 package account.database.management.system.service.impl;
 
-import account.database.management.system.exception.NotExistingErrorResponse;
-import account.database.management.system.exception.RepeatedEmailErrorResponse;
-import account.database.management.system.exception.RepeatedPasswordErrorResponse;
+import account.database.management.system.exception.global.NotExistingErrorResponse;
+import account.database.management.system.exception.global.RepeatedEmailErrorResponse;
+import account.database.management.system.exception.global.RepeatedPasswordErrorResponse;
 import account.database.management.system.model.Company;
 import account.database.management.system.repository.CompanyJPARepository;
 import account.database.management.system.service.AccountRepository;
@@ -34,7 +34,7 @@ public class CompanyImpl implements AccountRepository<Company> {
     @Override
     public Company add(Company company) {
         if (companyRepository.existsByEmail(company.getEmail())) {
-            throw new RepeatedEmailErrorResponse();
+            throw new RepeatedEmailErrorResponse("Company");
         }
 
         AESEncryptionDecryption aesEncryptionDecryption = new AESEncryptionDecryption();
@@ -45,7 +45,7 @@ public class CompanyImpl implements AccountRepository<Company> {
         List<Company> companies = companyRepository.findAll();
         for (Company existingCompanies : companies) {
             if (aesEncryptionDecryption.decrypt(existingCompanies.getPassword(), secretKey).equals(company.getPassword())) {
-                throw new RepeatedPasswordErrorResponse();
+                throw new RepeatedPasswordErrorResponse("Company");
             }
         }
         company.setPassword(hashed);
@@ -60,7 +60,7 @@ public class CompanyImpl implements AccountRepository<Company> {
             companyRepository.deleteById(id);
             return companyToBeRemoved;
         } else {
-            throw new NotExistingErrorResponse();
+            throw new NotExistingErrorResponse("Company");
         }
     }
 
@@ -75,7 +75,7 @@ public class CompanyImpl implements AccountRepository<Company> {
                     })
                     .orElseThrow(() -> new RuntimeException("Company not found with id " + id));
         } else {
-            throw new NotExistingErrorResponse();
+            throw new NotExistingErrorResponse("Company");
         }
     }
 
@@ -84,7 +84,7 @@ public class CompanyImpl implements AccountRepository<Company> {
         Company companyToBeReturned = companyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Company not exist with id: " + id));
         if (!companyRepository.existsById(companyToBeReturned.getId())) {
-            throw new NotExistingErrorResponse();
+            throw new NotExistingErrorResponse("Company");
         }
         companyRepository.getReferenceById(id);
         return companyToBeReturned;

@@ -1,8 +1,8 @@
 package account.database.management.system.service.impl;
 
-import account.database.management.system.exception.NotExistingErrorResponse;
-import account.database.management.system.exception.RepeatedEmailErrorResponse;
-import account.database.management.system.exception.RepeatedPasswordErrorResponse;
+import account.database.management.system.exception.global.NotExistingErrorResponse;
+import account.database.management.system.exception.global.RepeatedEmailErrorResponse;
+import account.database.management.system.exception.global.RepeatedPasswordErrorResponse;
 import account.database.management.system.model.JobSeeker;
 import account.database.management.system.repository.JobSeekerJPARepository;
 import account.database.management.system.service.AccountRepository;
@@ -17,12 +17,12 @@ import java.util.UUID;
 
 
 @Service
-public class AccountImpl implements AccountRepository<JobSeeker> {
+public class JobSeekerImpl implements AccountRepository<JobSeeker> {
 
     private final JobSeekerJPARepository jobSeekerRepository;
 
     @Autowired
-    public AccountImpl(JobSeekerJPARepository repository) {
+    public JobSeekerImpl(JobSeekerJPARepository repository) {
         this.jobSeekerRepository = repository;
     }
 
@@ -34,7 +34,7 @@ public class AccountImpl implements AccountRepository<JobSeeker> {
     @Override
     public JobSeeker add(JobSeeker jobSeeker) {
         if (jobSeekerRepository.existsByEmail(jobSeeker.getEmail())) {
-            throw new RepeatedEmailErrorResponse();
+            throw new RepeatedEmailErrorResponse("Job Seeker");
         }
 
         AESEncryptionDecryption aesEncryptionDecryption = new AESEncryptionDecryption();
@@ -45,7 +45,7 @@ public class AccountImpl implements AccountRepository<JobSeeker> {
         List<JobSeeker> jobSeekers = jobSeekerRepository.findAll();
         for (JobSeeker existingJobSeeker : jobSeekers) {
             if (aesEncryptionDecryption.decrypt(existingJobSeeker.getPassword(), secretKey).equals(jobSeeker.getPassword())) {
-                throw new RepeatedPasswordErrorResponse();
+                throw new RepeatedPasswordErrorResponse("Job Seeker");
             }
         }
         jobSeeker.setPassword(hashed);
@@ -60,7 +60,7 @@ public class AccountImpl implements AccountRepository<JobSeeker> {
             jobSeekerRepository.deleteById(id);
             return jobSeekerToBeRemoved;
         } else {
-            throw new NotExistingErrorResponse();
+            throw new NotExistingErrorResponse("Job Seeker");
         }
     }
 
@@ -75,7 +75,7 @@ public class AccountImpl implements AccountRepository<JobSeeker> {
                     })
                     .orElseThrow(() -> new RuntimeException("JobSeeker not found with id " + id));
         } else {
-            throw new NotExistingErrorResponse();
+            throw new NotExistingErrorResponse("Job Seeker");
         }
     }
 
@@ -84,7 +84,7 @@ public class AccountImpl implements AccountRepository<JobSeeker> {
         JobSeeker jobSeekerToBeReturned = jobSeekerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not exist with id: " + id));
         if (!jobSeekerRepository.existsById(jobSeekerToBeReturned.getId())) {
-            throw new NotExistingErrorResponse();
+            throw new NotExistingErrorResponse("Job Seeker");
         }
         jobSeekerRepository.getReferenceById(id);
         return jobSeekerToBeReturned;

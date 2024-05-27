@@ -1,6 +1,5 @@
 package account.database.management.system.model;
 
-import com.azure.core.annotation.Get;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,9 +36,6 @@ public class Company {
 
     @Column(name = "phoneNumber", nullable = false)
     private String phoneNumber;
-
-    @Column(name = "taxNumber", nullable = false)
-    private String taxNumber;
 
     @Column(name = "industry", nullable = false)
     private String industry;

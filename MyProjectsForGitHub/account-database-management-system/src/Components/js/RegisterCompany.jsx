@@ -10,10 +10,10 @@ const RegisterCompany = () => {
     const [formData, setFormData] = useState({
         companyName: '',
         contactPersonFullName: '',
-        country: null,
+        country: '',
         city: '',
         phoneNumber: '',
-        industry: null,
+        industry: '',
         email: '',
         password: '',
         reWritePassword: ''
@@ -31,10 +31,10 @@ const RegisterCompany = () => {
         setFormData({
             companyName: '',
             contactPersonFullName: '',
-            country: null,
+            country: '',
             city: '',
             phoneNumber: '',
-            industry: null,
+            industry: '',
             email: '',
             password: '',
             reWritePassword: ''
@@ -52,10 +52,10 @@ const RegisterCompany = () => {
     const isAllFieldsFilledExceptPassword = () => {
         return formData.companyName !== "" &&
             formData.contactPersonFullName !== "" &&
-            formData.country !== null &&
+            formData.country !== "" &&
             formData.city !== "" &&
             formData.phoneNumber !== "" &&
-            formData.industry !== null &&
+            formData.industry !== "" &&
             formData.email !== "";
     };
 
@@ -76,9 +76,11 @@ const RegisterCompany = () => {
 
             return response.json();
         } catch (error) {
+            alert(`Sign up failed: ${error.message}`);
             throw new Error(`Network error: ${error.message}`);
         }
     };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -114,9 +116,9 @@ const RegisterCompany = () => {
     };
 
     const handleCountryChange = (selectedOption) => {
-        const country = selectedOption ? selectedOption.label : null;
+        const country = selectedOption ? selectedOption.value : '';
         const cityOptions = selectCityOptions(country);
-        const randomCity = cityOptions.length > 0 ? cityOptions[Math.floor(Math.random() * cityOptions.length)].label : '';
+        const randomCity = cityOptions.length > 0 ? cityOptions[Math.floor(Math.random() * cityOptions.length)].value : '';
 
         setFormData({
             ...formData,
@@ -129,12 +131,12 @@ const RegisterCompany = () => {
     const handleCityChange = (selectedOption) => {
         setFormData({
             ...formData,
-            city: selectedOption ? selectedOption.label : ''
+            city: selectedOption ? selectedOption.value : ''
         });
     };
 
     const handleIndustryChange = (selectedOption) => {
-        const industry = selectedOption ? selectedOption.label : null;
+        const industry = selectedOption ? selectedOption.value : '';
         setFormData({
             ...formData,
             industry: industry
@@ -150,14 +152,15 @@ const RegisterCompany = () => {
 
     const selectCountryOptions = () => {
         return getAllCountries().map((country) => ({
-            value: country.value,
+            value: country.text,
             label: country.text
         }));
     };
 
     const selectIndustryOptions = () => {
         return getAllIndustries().map((industry) => ({
-            value: industry
+            value: industry.label,
+            label: industry.label
         }));
     };
 
@@ -214,12 +217,13 @@ const RegisterCompany = () => {
                            required
                     />
                 </div>
+
                 <div className="FormField">
                     <label className="Label">Country</label>
                     <Select
                         name="country"
                         className="Select"
-                        value={selectCountryOptions().find(option => option.label === formData.country) || null}
+                        value={selectCountryOptions().find(option => option.value === formData.country) || null}
                         onChange={handleCountryChange}
                         options={selectCountryOptions()}
                         placeholder="Select your country"
@@ -227,13 +231,14 @@ const RegisterCompany = () => {
                         required
                     />
                 </div>
+
                 {formData.country &&
                     <div className="FormField">
                         <label className="Label">City</label>
                         <Select
                             name="city"
                             className="Select"
-                            value={selectCityOptions(formData.country).find(option => option.label === formData.city) || null}
+                            value={selectCityOptions(formData.country).find(option => option.value === formData.city) || null}
                             onChange={handleCityChange}
                             options={selectCityOptions(formData.country)}
                             placeholder="Select your city"
@@ -242,6 +247,7 @@ const RegisterCompany = () => {
                         />
                     </div>
                 }
+
                 {formData.country &&
                     <div className="FormField">
                         <PhoneInput
@@ -253,20 +259,21 @@ const RegisterCompany = () => {
                         />
                     </div>
                 }
+
                 <div className="FormField">
                     <label className="Label">Industry</label>
                     <Select
                         name="industry"
                         className="Select"
+                        value={selectIndustryOptions().find(option => option.value === formData.industry) || null}
                         onChange={handleIndustryChange}
                         options={selectIndustryOptions()}
-                        getOptionLabel={(option) => option.value}
-                        getOptionValue={(option) => option.value}
                         placeholder="Select your industry"
                         isClearable
                         required
                     />
                 </div>
+
                 <div className="FormField">
                     <label className="Label">Email</label>
                     <input type="email"
@@ -277,6 +284,7 @@ const RegisterCompany = () => {
                            required
                     />
                 </div>
+
                 <div className="FormField">
                     <label className="Label">Password</label>
                     <input type="password"
@@ -287,6 +295,7 @@ const RegisterCompany = () => {
                            required
                     />
                 </div>
+
                 <div className="FormField">
                     <label className="Label">Re-write Password</label>
                     <input type="password"
@@ -297,19 +306,14 @@ const RegisterCompany = () => {
                            required
                     />
                 </div>
-                <button type="submit"
-                        className="Button"
-                        onClick={handleSubmit}
-                >
+                <button type="submit" className="Button" onClick={handleSubmit}>
                     Register
                 </button>
                 <div className="already-have-account">
                     <p className="login-text">
                         Already have an account:
                     </p>
-                    <button className="login-button"
-                            onClick={redirectToLogin}
-                    >
+                    <button className="login-button" onClick={redirectToLogin}>
                         Log In
                     </button>
                 </div>

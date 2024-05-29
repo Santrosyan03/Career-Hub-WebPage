@@ -20,6 +20,7 @@ import java.util.UUID;
 public class CompanyImpl implements AccountRepository<Company> {
 
     private final CompanyJPARepository companyRepository;
+    private final String COMPANY = "Company";
 
     @Autowired
     public CompanyImpl(CompanyJPARepository repository) {
@@ -34,7 +35,7 @@ public class CompanyImpl implements AccountRepository<Company> {
     @Override
     public Company add(Company company) {
         if (companyRepository.existsByEmail(company.getEmail())) {
-            throw new RepeatedEmailErrorResponse("Company");
+            throw new RepeatedEmailErrorResponse(COMPANY);
         }
 
         AESEncryptionDecryption aesEncryptionDecryption = new AESEncryptionDecryption();
@@ -45,7 +46,7 @@ public class CompanyImpl implements AccountRepository<Company> {
         List<Company> companies = companyRepository.findAll();
         for (Company existingCompanies : companies) {
             if (aesEncryptionDecryption.decrypt(existingCompanies.getPassword(), secretKey).equals(company.getPassword())) {
-                throw new RepeatedPasswordErrorResponse("Company");
+                throw new RepeatedPasswordErrorResponse(COMPANY);
             }
         }
         company.setPassword(hashed);
@@ -60,7 +61,7 @@ public class CompanyImpl implements AccountRepository<Company> {
             companyRepository.deleteById(id);
             return companyToBeRemoved;
         } else {
-            throw new NotExistingErrorResponse("Company");
+            throw new NotExistingErrorResponse(COMPANY);
         }
     }
 
@@ -75,7 +76,7 @@ public class CompanyImpl implements AccountRepository<Company> {
                     })
                     .orElseThrow(() -> new RuntimeException("Company not found with id " + id));
         } else {
-            throw new NotExistingErrorResponse("Company");
+            throw new NotExistingErrorResponse(COMPANY);
         }
     }
 
@@ -84,7 +85,7 @@ public class CompanyImpl implements AccountRepository<Company> {
         Company companyToBeReturned = companyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Company not exist with id: " + id));
         if (!companyRepository.existsById(companyToBeReturned.getId())) {
-            throw new NotExistingErrorResponse("Company");
+            throw new NotExistingErrorResponse(COMPANY);
         }
         companyRepository.getReferenceById(id);
         return companyToBeReturned;

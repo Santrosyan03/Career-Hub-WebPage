@@ -20,6 +20,7 @@ import java.util.UUID;
 public class JobSeekerImpl implements AccountRepository<JobSeeker> {
 
     private final JobSeekerJPARepository jobSeekerRepository;
+    private final String JOB_SEEKER = "Job Seeker";
 
     @Autowired
     public JobSeekerImpl(JobSeekerJPARepository repository) {
@@ -45,7 +46,7 @@ public class JobSeekerImpl implements AccountRepository<JobSeeker> {
         List<JobSeeker> jobSeekers = jobSeekerRepository.findAll();
         for (JobSeeker existingJobSeeker : jobSeekers) {
             if (aesEncryptionDecryption.decrypt(existingJobSeeker.getPassword(), secretKey).equals(jobSeeker.getPassword())) {
-                throw new RepeatedPasswordErrorResponse("Job Seeker");
+                throw new RepeatedPasswordErrorResponse(JOB_SEEKER);
             }
         }
         jobSeeker.setPassword(hashed);
@@ -60,7 +61,7 @@ public class JobSeekerImpl implements AccountRepository<JobSeeker> {
             jobSeekerRepository.deleteById(id);
             return jobSeekerToBeRemoved;
         } else {
-            throw new NotExistingErrorResponse("Job Seeker");
+            throw new NotExistingErrorResponse(JOB_SEEKER);
         }
     }
 
@@ -75,7 +76,7 @@ public class JobSeekerImpl implements AccountRepository<JobSeeker> {
                     })
                     .orElseThrow(() -> new RuntimeException("JobSeeker not found with id " + id));
         } else {
-            throw new NotExistingErrorResponse("Job Seeker");
+            throw new NotExistingErrorResponse(JOB_SEEKER);
         }
     }
 
@@ -84,7 +85,7 @@ public class JobSeekerImpl implements AccountRepository<JobSeeker> {
         JobSeeker jobSeekerToBeReturned = jobSeekerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not exist with id: " + id));
         if (!jobSeekerRepository.existsById(jobSeekerToBeReturned.getId())) {
-            throw new NotExistingErrorResponse("Job Seeker");
+            throw new NotExistingErrorResponse(JOB_SEEKER);
         }
         jobSeekerRepository.getReferenceById(id);
         return jobSeekerToBeReturned;

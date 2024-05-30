@@ -3,7 +3,9 @@ package account.database.management.system.service.impl;
 import account.database.management.system.exception.global.NotExistingErrorResponse;
 import account.database.management.system.exception.global.RepeatedEmailErrorResponse;
 import account.database.management.system.exception.global.RepeatedPasswordErrorResponse;
+import account.database.management.system.model.Company;
 import account.database.management.system.model.JobSeeker;
+import account.database.management.system.repository.CompanyJPARepository;
 import account.database.management.system.repository.JobSeekerJPARepository;
 import account.database.management.system.service.AccountRepository;
 
@@ -19,12 +21,16 @@ import java.util.UUID;
 @Service
 public class JobSeekerImpl implements AccountRepository<JobSeeker> {
 
+    private final CompanyJPARepository companyRepository;
     private final JobSeekerJPARepository jobSeekerRepository;
+    private final String COMPANY = "Company";
     private final String JOB_SEEKER = "Job Seeker";
 
+
     @Autowired
-    public JobSeekerImpl(JobSeekerJPARepository repository) {
-        this.jobSeekerRepository = repository;
+    public JobSeekerImpl(JobSeekerJPARepository jobSeekerRepository, CompanyJPARepository companyRepository) {
+        this.jobSeekerRepository = jobSeekerRepository;
+        this.companyRepository = companyRepository;
     }
 
     @Override
@@ -35,18 +41,28 @@ public class JobSeekerImpl implements AccountRepository<JobSeeker> {
     @Override
     public JobSeeker add(JobSeeker jobSeeker) {
         if (jobSeekerRepository.existsByEmail(jobSeeker.getEmail())) {
-            throw new RepeatedEmailErrorResponse("Job Seeker");
+            throw new RepeatedEmailErrorResponse(JOB_SEEKER);
+        }
+
+        if (companyRepository.existsByEmail(jobSeeker.getEmail())) {
+            throw new RepeatedEmailErrorResponse(COMPANY);
         }
 
         AESEncryptionDecryption aesEncryptionDecryption = new AESEncryptionDecryption();
-        String secretKey = "JobSeekerSecretKey";
+        String secretKey = "secretKey";
         String hashed = aesEncryptionDecryption.encrypt(jobSeeker.getPassword(), secretKey);
 
-
         List<JobSeeker> jobSeekers = jobSeekerRepository.findAll();
-        for (JobSeeker existingJobSeeker : jobSeekers) {
-            if (aesEncryptionDecryption.decrypt(existingJobSeeker.getPassword(), secretKey).equals(jobSeeker.getPassword())) {
+        for (JobSeeker existingJobSeekers : jobSeekers) {
+            if (aesEncryptionDecryption.decrypt(existingJobSeekers.getPassword(), secretKey).equals(jobSeeker.getPassword())) {
                 throw new RepeatedPasswordErrorResponse(JOB_SEEKER);
+            }
+        }
+
+        List<Company> companies = companyRepository.findAll();
+        for (Company existingCompanies : companies) {
+            if (aesEncryptionDecryption.decrypt(existingCompanies.getPassword(), secretKey).equals(jobSeeker.getPassword())) {
+                throw new RepeatedPasswordErrorResponse(COMPANY);
             }
         }
         jobSeeker.setPassword(hashed);

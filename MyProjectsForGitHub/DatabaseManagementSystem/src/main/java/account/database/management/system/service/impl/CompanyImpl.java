@@ -1,10 +1,13 @@
 package account.database.management.system.service.impl;
 
 import account.database.management.system.exception.global.NotExistingErrorResponse;
+import account.database.management.system.exception.global.RepeatedCompanyNameErrorResponse;
 import account.database.management.system.exception.global.RepeatedEmailErrorResponse;
 import account.database.management.system.exception.global.RepeatedPasswordErrorResponse;
 import account.database.management.system.model.Company;
+import account.database.management.system.model.JobSeeker;
 import account.database.management.system.repository.CompanyJPARepository;
+import account.database.management.system.repository.JobSeekerJPARepository;
 import account.database.management.system.service.AccountRepository;
 
 import net.javaguides.examples.security.AESEncryptionDecryption;
@@ -20,11 +23,15 @@ import java.util.UUID;
 public class CompanyImpl implements AccountRepository<Company> {
 
     private final CompanyJPARepository companyRepository;
+    private final JobSeekerJPARepository jobSeekerRepository;
     private final String COMPANY = "Company";
+    private final String JOB_SEEKER = "Job Seeker";
+
 
     @Autowired
-    public CompanyImpl(CompanyJPARepository repository) {
-        this.companyRepository = repository;
+    public CompanyImpl(CompanyJPARepository companyRepository, JobSeekerJPARepository jobSeekerRepository) {
+        this.companyRepository = companyRepository;
+        this.jobSeekerRepository = jobSeekerRepository;
     }
 
     @Override
@@ -38,8 +45,12 @@ public class CompanyImpl implements AccountRepository<Company> {
             throw new RepeatedEmailErrorResponse(COMPANY);
         }
 
+        if (jobSeekerRepository.existsByEmail(company.getEmail())) {
+            throw new RepeatedEmailErrorResponse(JOB_SEEKER);
+        }
+
         AESEncryptionDecryption aesEncryptionDecryption = new AESEncryptionDecryption();
-        String secretKey = "companySecretKey";
+        String secretKey = "secretKey";
         String hashed = aesEncryptionDecryption.encrypt(company.getPassword(), secretKey);
 
 
@@ -47,6 +58,17 @@ public class CompanyImpl implements AccountRepository<Company> {
         for (Company existingCompanies : companies) {
             if (aesEncryptionDecryption.decrypt(existingCompanies.getPassword(), secretKey).equals(company.getPassword())) {
                 throw new RepeatedPasswordErrorResponse(COMPANY);
+            }
+
+            if (existingCompanies.getCompanyName().equals(company.getCompanyName())) {
+                throw new RepeatedCompanyNameErrorResponse(existingCompanies.getCompanyName());
+            }
+        }
+
+        List<JobSeeker> jobSeekers = jobSeekerRepository.findAll();
+        for (JobSeeker existingJobSeekers : jobSeekers) {
+            if (aesEncryptionDecryption.decrypt(existingJobSeekers.getPassword(), secretKey).equals(company.getPassword())) {
+                throw new RepeatedPasswordErrorResponse(JOB_SEEKER);
             }
         }
         company.setPassword(hashed);

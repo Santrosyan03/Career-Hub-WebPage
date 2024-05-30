@@ -76,11 +76,9 @@ const RegisterCompany = () => {
 
             return response.json();
         } catch (error) {
-            alert(`Sign up failed: ${error.message}`);
             throw new Error(`Network error: ${error.message}`);
         }
     };
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -91,7 +89,7 @@ const RegisterCompany = () => {
         }
 
         if (!isPasswordInCorrectType()) {
-            alert("Password should be at least 8 characters long and include at least one number, one letter (uppercase and lowercase) and one symbol");
+            alert("Password should be at least 8 characters long and include at least one number, one letter (uppercase and lowercase), and one symbol");
             return;
         }
 
@@ -189,7 +187,7 @@ const RegisterCompany = () => {
 
     return (
         <div className="SignUpContainer">
-            <form className="SignUpForm">
+            <form className="SignUpForm" onSubmit={handleSubmit}>
                 <h2 className="FormTitle">
                     Create Account For Company
                 </h2>
@@ -306,14 +304,14 @@ const RegisterCompany = () => {
                            required
                     />
                 </div>
-                <button type="submit" className="Button" onClick={handleSubmit}>
+                <button type="submit" className="Button">
                     Register
                 </button>
                 <div className="already-have-account">
                     <p className="login-text">
                         Already have an account:
                     </p>
-                    <button className="login-button" onClick={redirectToLogin}>
+                    <button type="button" className="login-button" onClick={redirectToLogin}>
                         Log In
                     </button>
                 </div>

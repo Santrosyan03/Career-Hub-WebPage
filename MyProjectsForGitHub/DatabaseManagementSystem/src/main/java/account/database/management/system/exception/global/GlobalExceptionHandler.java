@@ -42,4 +42,15 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_ACCEPTABLE);
     }
+
+    @ExceptionHandler(RepeatedCompanyNameErrorResponse.class)
+    public ResponseEntity<ErrorResponse> handleRepeatedCompanyNameErrorResponse(RepeatedCompanyNameErrorResponse ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.NOT_ACCEPTABLE.value(),
+                "Not Acceptable",
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_ACCEPTABLE);
+    }
 }

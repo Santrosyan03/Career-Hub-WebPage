@@ -46,7 +46,7 @@ const Menu = () => {
                         For Companies
                     </li>
                     <div className="dropdown-content">
-                        <Link to="/companies/signin">
+                        <Link to="/companies/login">
                             Sign In
                         </Link>
                         <Link to="/companies/register">
@@ -65,7 +65,7 @@ const Menu = () => {
                         For Job Seekers
                     </li>
                     <div className="dropdown-content">
-                        <Link to="/job/seeker/signin">
+                        <Link to="/job/seeker/login">
                             Sign In
                         </Link>
                         <Link to="/job/seeker/register">

@@ -18,7 +18,7 @@ export function getAllIndustries() {
                 { label: "Government", value: "G" },
                 { label: "Agriculture/Winemaking", value: "A/W" },
                 { label: "Logistics/Courier", value: "L/C" },
-                { label: "Foundation", value: "F" },
+                { label: "Foundation", value: "F" },+
                 { label: "Sports/Betting", value: "S/B" },
                 { label: "Appliance Store", value: "A S" },
                 { label: "Retail Business", value: "R B" },

@@ -6,6 +6,13 @@
     height: 100vh;
 }
 
+.LoginContainer {
+    padding-top: 170px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .SignUpForm {
     background: #ffffff;
     padding: 50px;

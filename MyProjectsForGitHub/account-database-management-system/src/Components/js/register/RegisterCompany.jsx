@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import '../css/Register.css';
-import { getAllCountries } from '../information/countries.js';
-import cities from "../information/cities.json";
+import React, { useState, useEffect } from 'react';
+import '../../css/RegisterAndLogIn.css';
+import { getAllCountries } from '../../information/countries';
+import cities from "../../information/cities.json";
 import Select from "react-select";
 import PhoneInput from 'react-phone-input-2';
-import { getAllIndustries } from "../information/industries";
+import 'react-phone-input-2/lib/style.css';
+import { getAllIndustries } from "../../information/industries";
+import axios from 'axios';
 
 const RegisterCompany = () => {
     const [formData, setFormData] = useState({
@@ -18,6 +20,20 @@ const RegisterCompany = () => {
         password: '',
         reWritePassword: ''
     });
+
+    const [csrfToken, setCsrfToken] = useState('');
+
+    useEffect(() => {
+        const fetchCsrfToken = async () => {
+            try {
+                const response = await axios.get('/csrf-token');
+                setCsrfToken(response.data.token);
+            } catch (error) {
+                console.error('Error fetching CSRF token:', error);
+            }
+        };
+        fetchCsrfToken();
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -41,13 +57,9 @@ const RegisterCompany = () => {
         });
     };
 
-    const passwordsMatch = () => {
-        return formData.password === formData.reWritePassword;
-    };
+    const passwordsMatch = () => formData.password === formData.reWritePassword;
 
-    const isPasswordInCorrectType = () => {
-        return /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(formData.password);
-    };
+    const isPasswordInCorrectType = () => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(formData.password);
 
     const isAllFieldsFilledExceptPassword = () => {
         return formData.companyName !== "" &&
@@ -61,20 +73,13 @@ const RegisterCompany = () => {
 
     const sendPostRequest = async () => {
         try {
-            const response = await fetch('/companies/register', {
-                method: 'POST',
+            const response = await axios.post('/companies/register', formData, {
                 headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                }
             });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message);
-            }
-
-            return response.json();
+            return response.data;
         } catch (error) {
             throw new Error(`Network error: ${error.message}`);
         }
@@ -110,19 +115,15 @@ const RegisterCompany = () => {
     };
 
     const redirectToLogin = () => {
-        window.location.href = '/companies/login';
+        window.location.href = '/login';
     };
 
     const handleCountryChange = (selectedOption) => {
         const country = selectedOption ? selectedOption.value : '';
-        const cityOptions = selectCityOptions(country);
-        const randomCity = cityOptions.length > 0 ? cityOptions[Math.floor(Math.random() * cityOptions.length)].value : '';
-
         setFormData({
             ...formData,
             country: country,
-            city: randomCity,
-            phoneNumber: country ? formData.phoneNumber : ''
+            city: ''
         });
     };
 
@@ -134,10 +135,9 @@ const RegisterCompany = () => {
     };
 
     const handleIndustryChange = (selectedOption) => {
-        const industry = selectedOption ? selectedOption.value : '';
         setFormData({
             ...formData,
-            industry: industry
+            industry: selectedOption ? selectedOption.value : ''
         });
     };
 
@@ -148,17 +148,22 @@ const RegisterCompany = () => {
         });
     };
 
-    const selectCountryOptions = () => {
-        return getAllCountries().map((country) => ({
-            value: country.text,
-            label: country.text
-        }));
-    };
+    const selectCountryOptions = () => getAllCountries().map((country) => ({
+        value: country.text,
+        label: country.text
+    }));
 
-    const selectIndustryOptions = () => {
-        return getAllIndustries().map((industry) => ({
-            value: industry.label,
-            label: industry.label
+    const selectIndustryOptions = () => getAllIndustries().map((industry) => ({
+        value: industry.label,
+        label: industry.label
+    }));
+
+    const selectCityOptions = (countryName) => {
+        const country = getAllCountries().find((c) => c.text === countryName);
+        const countryCode = country ? country.value : '';
+        return cities.filter(city => city.country === countryCode).map(city => ({
+            value: city.name,
+            label: city.name
         }));
     };
 
@@ -167,22 +172,6 @@ const RegisterCompany = () => {
             (country) => country.text === countryName
         );
         return country ? country.value.toLowerCase() : '';
-    };
-
-    const selectCityOptions = (countryName) => {
-        const country = getAllCountries().find((c) => c.text === countryName);
-        const countryCode = country ? country.value : '';
-
-        const filteredCities = [];
-        for (const city of cities) {
-            if (city.country === countryCode) {
-                filteredCities.push({ value: city.name, label: city.name });
-            }
-        }
-
-        filteredCities.sort((a, b) => a.label.localeCompare(b.label));
-
-        return filteredCities;
     };
 
     return (

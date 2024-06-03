@@ -40,9 +40,6 @@ public class Company {
     @Column(name = "industry", nullable = false)
     private String industry;
 
-    @Column(name = "email", nullable = false, unique = true)
-    private String email;
-
     @Column(name = "password", nullable = false, unique = true)
     private String password;
 }

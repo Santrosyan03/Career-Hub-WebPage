@@ -13,7 +13,7 @@ export const setAuthHeader = (token) => {
     }
 };
 
-axios.defaults.baseURL = 'http://localhost:8080';
+axios.defaults.baseURL = 'http://localhost:8080/job/seeker/';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 export const request = (method, url, data) => {

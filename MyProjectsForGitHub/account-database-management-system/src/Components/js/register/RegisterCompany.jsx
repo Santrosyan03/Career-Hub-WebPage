@@ -76,7 +76,6 @@ const RegisterCompany = () => {
             const response = await axios.post('/companies/register', formData, {
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken
                 }
             });
             return response.data;

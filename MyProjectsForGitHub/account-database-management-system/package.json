@@ -10,6 +10,7 @@
     "axios": "^1.7.2",
     "buffer": "^6.0.3",
     "classnames": "^2.5.1",
+    "cors": "^2.8.5",
     "crypto-browserify": "^3.12.0",
     "https-browserify": "^1.0.0",
     "os-browserify": "^0.3.0",
@@ -60,5 +61,5 @@
     "eslint": "^8.31.0",
     "prettier": "^2.7.1"
   },
-  "homepage": "http://localhost:5000/"
+  "homepage": "."
 }
